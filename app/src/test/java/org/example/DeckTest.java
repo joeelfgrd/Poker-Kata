@@ -1,36 +1,63 @@
 package org.example;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
+
 public class DeckTest {
+    private Deck deck;
 
-    @Test
-    public void testInitializeDeck() {
-        Deck deck = new Deck();
-        
-        // Obtener la lista de cartas en la baraja
-        List<Card> cards = deck.getCards();
-        
-        // Verificar que la lista de cartas no esté vacía
-        assertFalse(cards.isEmpty());
+    @Before
+    public void setUp() {
+        deck = new Deck();
     }
 
     @Test
-    public void testShuffle() {
-        Deck deck = new Deck();
-        List<Card> originalOrder = new ArrayList<>(deck.getCards()); // Copia del orden original
-        
-        // Verificar que la lista de cartas no esté vacía antes de mezclar
-        assertFalse(deck.getCards().isEmpty());
-        
-        // Mezclar la baraja
-        deck.shuffle();
-        
-        // Verificar que las cartas se han mezclado
-        assertNotEquals(originalOrder, deck.getCards());
+    public void testDealCardsNormal() {
+        List<Card> dealtCards = deck.dealCards(false);
+
+        assertNotNull(dealtCards); // Verificar que se ha repartido al menos una carta
+        assertEquals(1, dealtCards.size()); // Verificar que se ha repartido una sola carta
     }
-} 
+
+    @Test
+    public void testDealCardsTurn() {
+        Card discardedCard = deck.getCards().get(0); // Obtener la carta que se descartará en el turn
+        
+        deck.dealCards(true);
+        
+        assertEquals(discardedCard, deck.getCards().get(deck.getCards().size() - 1)); // Verificar que la carta descartada está al final del mazo
+    }
+
+    @Test
+    public void testDealCardsRiver() {
+        Card discardedCard = deck.getCards().get(0); // Obtener la carta que se descartará en el river
+        
+        deck.dealCards(true);
+        
+        assertEquals(discardedCard, deck.getCards().get(deck.getCards().size() - 1)); // Verificar que la carta descartada está al final del mazo
+    }
+
+    @Test
+    public void testDealCard() {
+        Card dealtCard = deck.dealCard();
+
+        assertNotNull(dealtCard); // Verificar que se ha repartido una carta
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testDealCardEmptyDeck() {
+        // Vaciar la baraja
+        while (!deck.getCards().isEmpty()) {
+            deck.dealCard();
+        }
+        
+        // Intentar repartir una carta cuando la baraja está vacía
+        deck.dealCard();
+    }
+}
