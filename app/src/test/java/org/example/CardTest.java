@@ -22,4 +22,12 @@ public class CardTest {
         Card card = new Card("Diamonds", "J");
         assertEquals("J of Diamonds", card.toString());
     }
+
+    @Test
+    public void testCompareTo() {
+        Card card1 = new Card("Hearts", "A");
+        Card card2 = new Card("Diamonds", "K");
+
+        assertTrue(card1.compareTo(card2) > 0); // A (14) > K (13)
+    }
 }

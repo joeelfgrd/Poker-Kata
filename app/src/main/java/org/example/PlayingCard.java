@@ -19,11 +19,9 @@ public class PlayingCard implements Comparable<PlayingCard> {
 
     @Override
     public int compareTo(PlayingCard other) {
-        // Asignar valores numéricos a las cartas
         int thisValue = getValueAsInt(this.value);
         int otherValue = getValueAsInt(other.getValue());
-    
-        // Comparar las cartas por sus valores numéricos
+
         return Integer.compare(thisValue, otherValue);
     }
     
@@ -38,7 +36,12 @@ public class PlayingCard implements Comparable<PlayingCard> {
             case "J":
                 return 11;
             default:
-                return Integer.parseInt(value);
+
+                try {
+                    return Integer.parseInt(value);
+                } catch (NumberFormatException e) {
+                    return -1;
+                }
         }
     }
 }
