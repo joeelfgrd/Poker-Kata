@@ -119,6 +119,40 @@ public class HandEvaluatorTest {
         // Verificamos que la mano no sea clasificada como un full house
         assertNotEquals(HandRank.FULL_HOUSE, result.getHandRank());
     }
+
+    @Test
+    public void testContainsFlush_FlushPresent() {
+        HandEvaluator evaluator = new HandEvaluator();
+        List<PlayingCard> hand = new ArrayList<>();
+        hand.add(new PlayingCard("Spades", "A"));
+        hand.add(new PlayingCard("Spades", "K"));
+        
+        List<PlayingCard> communityCards = new ArrayList<>();
+        communityCards.add(new PlayingCard("Spades", "Q"));
+        communityCards.add(new PlayingCard("Spades", "J"));
+        communityCards.add(new PlayingCard("Spades", "10"));
+        communityCards.add(new PlayingCard("Spades", "9"));
+        communityCards.add(new PlayingCard("Clubs", "7")); // Se añade una carta de otro palo
+        
+        assertTrue(evaluator.containsFlush(hand, communityCards));
+    }
+
+    @Test
+    public void testContainsFlush_NoFlushPresent() {
+        HandEvaluator evaluator = new HandEvaluator();
+        List<PlayingCard> hand = new ArrayList<>();
+        hand.add(new PlayingCard("Spades", "A"));
+        hand.add(new PlayingCard("Hearts", "K"));
+        
+        List<PlayingCard> communityCards = new ArrayList<>();
+        communityCards.add(new PlayingCard("Spades", "Q"));
+        communityCards.add(new PlayingCard("Spades", "J"));
+        communityCards.add(new PlayingCard("Clubs", "10")); // Se añade una carta de otro palo
+        communityCards.add(new PlayingCard("Spades", "9"));
+        communityCards.add(new PlayingCard("Clubs", "7")); // Se añade una carta de otro palo
+        
+        assertFalse(evaluator.containsFlush(hand, communityCards));
+    }
     
 }
     
