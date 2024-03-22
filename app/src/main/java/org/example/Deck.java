@@ -6,6 +6,8 @@ import java.util.List;
 
 public class Deck {
     private List<Card> cards;
+    static final String[] SUITS = {"Hearts", "Diamonds", "Clubs", "Spades"};
+    static final String[] VALUES = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 
     public Deck() {
         this.cards = new ArrayList<>();
@@ -14,11 +16,8 @@ public class Deck {
 
     
     private void initializeDeck() {
-        String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
-        String[] values = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
-
-        for (String suit : suits) {
-            for (String value : values) {
+        for (String suit : SUITS) {
+            for (String value : VALUES) {
                 cards.add(new Card(suit, value));
             }
         }

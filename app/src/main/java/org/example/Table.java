@@ -24,7 +24,7 @@ public class Table {
     private void dealCards(Deck deck, int numCards) {
         List<Card> cards = deck.getCards();
         for (int i = 0; i < numCards; i++) {
-            communityCards.add(cards.remove(0)); 
+            communityCards.add(cards.removeFirst());
         }
     }
     

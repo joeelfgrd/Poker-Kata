@@ -1,27 +1,26 @@
 package org.example;
-import java.util.HashMap;
 import java.util.Map;
+import static java.util.Map.entry;
 
 public class Card implements Comparable<Card> {
-    private String suit;
-    private String value;
+    private final String suit;
+    private final String value;
     
-    private static final Map<String, Integer> VALUE_MAP = new HashMap<>();
-    static {
-        VALUE_MAP.put("2", 2);
-        VALUE_MAP.put("3", 3);
-        VALUE_MAP.put("4", 4);
-        VALUE_MAP.put("5", 5);
-        VALUE_MAP.put("6", 6);
-        VALUE_MAP.put("7", 7);
-        VALUE_MAP.put("8", 8);
-        VALUE_MAP.put("9", 9);
-        VALUE_MAP.put("10", 10);
-        VALUE_MAP.put("J", 11);
-        VALUE_MAP.put("Q", 12);
-        VALUE_MAP.put("K", 13);
-        VALUE_MAP.put("A", 14); 
-    }
+    private static final Map<String, Integer> VALUE_MAP = Map.ofEntries(
+        entry("2", 2),
+        entry("3", 3),
+        entry("4", 4),
+        entry("5", 5),
+        entry("6", 6),
+        entry("7", 7),
+        entry("8", 8),
+        entry("9", 9),
+        entry("10", 10),
+        entry("J", 11),
+        entry("Q", 12),
+        entry("K", 13),
+        entry("A", 14)
+    );
 
     public Card(String suit, String value) {
         this.suit = suit;
@@ -38,13 +37,11 @@ public class Card implements Comparable<Card> {
 
     @Override
     public int compareTo(Card otherCard) {
-        
         int valueComparison = Integer.compare(getNumericValue(), otherCard.getNumericValue());
         if (valueComparison == 0) {
             return suit.compareTo(otherCard.getSuit());
-        } else {
-            return valueComparison;
         }
+        return valueComparison;
     }
     
     private int getNumericValue() {

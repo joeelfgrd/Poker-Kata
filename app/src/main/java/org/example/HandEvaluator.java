@@ -17,7 +17,6 @@ public class HandEvaluator {
             if (highCard != null) {
                 return new HandWithPlayerIndex(HandRank.HIGH_CARD, highCard, playerIndex, hand);
             } else {
-
                 return new HandWithPlayerIndex(HandRank.HIGH_CARD, findHighCard(hand, communityCards), playerIndex, hand);
             }
         }
@@ -31,15 +30,7 @@ public class HandEvaluator {
             return null; 
         }
         
-        PlayingCard highCard = allCards.get(0);
-        for (int i = 1; i < allCards.size(); i++) {
-            PlayingCard currentCard = allCards.get(i);
-            if (currentCard.compareTo(highCard) > 0) { 
-                highCard = currentCard;
-            }
-        }
-        
-        return highCard;
+        return allCards.stream().parallel().max(PlayingCard::compareTo).orElse(null);
     }
 
     public boolean containsFourOfAKind(List<PlayingCard> hand, List<PlayingCard> communityCards) {
