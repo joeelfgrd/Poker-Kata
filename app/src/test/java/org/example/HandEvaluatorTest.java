@@ -1,82 +1,124 @@
 package org.example;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class HandEvaluatorTest {
 
     @Test
-    public void testEvaluateHands() {
-        PlayingCard card1 = new PlayingCard("Hearts", "2");
-        PlayingCard card2 = new PlayingCard("Hearts", "3");
-        PlayingCard card3 = new PlayingCard("Hearts", "4");
-        PlayingCard card4 = new PlayingCard("Hearts", "5");
-        PlayingCard card5 = new PlayingCard("Hearts", "6");
+    public void testEvaluateHand_FourOfAKind() {
+        // Arrange
+        HandEvaluator evaluator = new HandEvaluator();
+        List<PlayingCard> hand = new ArrayList<>();
+        hand.add(new PlayingCard("Hearts", "A"));
+        hand.add(new PlayingCard("Diamonds", "A"));
+        hand.add(new PlayingCard("Clubs", "A"));
+        hand.add(new PlayingCard("Spades", "A"));
+
+        // Act
+        HandWithPlayerIndex result = evaluator.evaluateHand(hand, new ArrayList<>(), 0);
+
+        // Assert
+        assertEquals(HandRank.FOUR_OF_A_KIND, result.getHandRank());
+    }
+
+    @Test
+    public void testEvaluateHand_HighCard() {
+        // Arrange
+        HandEvaluator evaluator = new HandEvaluator();
+        List<PlayingCard> hand = new ArrayList<>();
+        hand.add(new PlayingCard("Hearts", "A"));
+        hand.add(new PlayingCard("Diamonds", "K"));
+
+        // Act
+        HandWithPlayerIndex result = evaluator.evaluateHand(hand, new ArrayList<>(), 0);
+
+        // Assert
+        assertEquals(HandRank.HIGH_CARD, result.getHandRank());
+        assertEquals(new PlayingCard("Hearts", "A"), result.getHighCard());
+    }
+
+    @Test
+    public void testContainsFourOfAKind_FourOfAKindPresent() {
+        // Arrange
+        HandEvaluator evaluator = new HandEvaluator();
+        List<PlayingCard> hand = new ArrayList<>();
+        hand.add(new PlayingCard("Hearts", "3"));
+        hand.add(new PlayingCard("Diamonds", "3"));
+        hand.add(new PlayingCard("Clubs", "3"));
+        hand.add(new PlayingCard("Spades", "3"));
+        List<PlayingCard> communityCards = new ArrayList<>();
+
+        // Act
+        boolean result = evaluator.containsFourOfAKind(hand, communityCards);
+
+        // Assert
+        assertTrue(result);
+    }
+
+    @Test
+    public void testContainsFourOfAKind_NoFourOfAKindPresent() {
+        // Arrange
+        HandEvaluator evaluator = new HandEvaluator();
+        List<PlayingCard> hand = new ArrayList<>();
+        hand.add(new PlayingCard("Hearts", "A"));
+        hand.add(new PlayingCard("Diamonds", "K"));
+        hand.add(new PlayingCard("Clubs", "Q"));
+        hand.add(new PlayingCard("Spades", "J"));
+        List<PlayingCard> communityCards = new ArrayList<>();
+
+        // Act
+        boolean result = evaluator.containsFourOfAKind(hand, communityCards);
+
+        // Assert
+        assertFalse(result);
+    }
+
+    @Test
+    public void testEvaluateHand_FullHouse() {
+        List<PlayingCard> hand = new ArrayList<>();
+        hand.add(new PlayingCard("Spades", "A"));
+        hand.add(new PlayingCard("Hearts", "A"));
         
-        List<PlayingCard> hand1 = Arrays.asList(card1, card2, card3, card4, card5);
-        List<PlayingCard> hand2 = Arrays.asList(card1, card2, card3, card4, card5);
-        List<List<PlayingCard>> playerHands = new ArrayList<>();
-        playerHands.add(hand1);
-        playerHands.add(hand2);
-
         List<PlayingCard> communityCards = new ArrayList<>();
-
+        communityCards.add(new PlayingCard("Diamonds", "3"));
+        communityCards.add(new PlayingCard("Clubs", "Q"));
+        communityCards.add(new PlayingCard("Clubs", "Q"));
+        communityCards.add(new PlayingCard("Clubs", "Q"));
+        
         HandEvaluator evaluator = new HandEvaluator();
-        evaluator.evaluateHands(playerHands, communityCards);
+        HandWithPlayerIndex result = evaluator.evaluateHand(hand, communityCards, 0);
+        
 
-        HandWithPlayerIndex winner = evaluator.getWinner();
-        assertNotNull(winner);
-
-        assertEquals(HandRank.STRAIGHT_FLUSH, winner.getHandRank());
+        assertEquals(HandRank.FULL_HOUSE, result.getHandRank());
     }
+
     @Test
-    public void testEvaluateHands_OnePlayerHighCard() {
-        // Preparar datos de prueba
+    public void testEvaluateHand_NotFullHouse() {
+        // Creamos una mano y cartas comunitarias que no formen un full house
         List<PlayingCard> hand = new ArrayList<>();
-        hand.add(new PlayingCard("A", "Spades"));
-        hand.add(new PlayingCard("K", "Hearts"));
-
-        List<List<PlayingCard>> playerHands = new ArrayList<>();
-        playerHands.add(hand);
-
+        hand.add(new PlayingCard("Spades", "A"));
+        hand.add(new PlayingCard("Hearts", "A"));
+        
         List<PlayingCard> communityCards = new ArrayList<>();
-
-        // Evaluar manos
+        communityCards.add(new PlayingCard("Diamonds", "A"));
+        communityCards.add(new PlayingCard("Clubs", "K"));
+        communityCards.add(new PlayingCard("Clubs", "Q"));
+        communityCards.add(new PlayingCard("Clubs", "J"));
+        
         HandEvaluator evaluator = new HandEvaluator();
-        evaluator.evaluateHands(playerHands, communityCards);
-        HandWithPlayerIndex winner = evaluator.getWinner();
-
-        // Verificar resultado esperado
-        assertNotNull(winner);
-        assertEquals(0, winner.getPlayerIndex());
-        assertEquals(HandRank.HIGH_CARD, winner.getHandRank());
+        HandWithPlayerIndex result = evaluator.evaluateHand(hand, communityCards, 0);
+        
+        // Verificamos que la mano no sea clasificada como un full house
+        assertNotEquals(HandRank.FULL_HOUSE, result.getHandRank());
     }
-    @Test
-    public void testEvaluateHands_OnePlayerTwoPairs() {
-        // Preparar datos de prueba
-        List<PlayingCard> hand = new ArrayList<>();
-        hand.add(new PlayingCard("A", "Spades"));
-        hand.add(new PlayingCard("A", "Hearts"));
-        hand.add(new PlayingCard("K", "Diamonds"));
-        hand.add(new PlayingCard("K", "Clubs"));
-
-        List<List<PlayingCard>> playerHands = new ArrayList<>();
-        playerHands.add(hand);
-
-        List<PlayingCard> communityCards = new ArrayList<>();
-
-        // Evaluar manos
-        HandEvaluator evaluator = new HandEvaluator();
-        evaluator.evaluateHands(playerHands, communityCards);
-        HandWithPlayerIndex winner = evaluator.getWinner();
-
-        // Verificar resultado esperado
-        assertNotNull(winner);
-        assertEquals(0, winner.getPlayerIndex());
-        assertEquals(HandRank.TWO_PAIR, winner.getHandRank());
-    }
+    
 }
+    
