@@ -12,6 +12,8 @@ public class HandEvaluator {
             return new HandWithPlayerIndex(HandRank.FOUR_OF_A_KIND, null, playerIndex, hand);
         } else if (containsFullHouse(hand, communityCards)) {
             return new HandWithPlayerIndex(HandRank.FULL_HOUSE, null, playerIndex, hand);
+        } else if (containsFlush(hand, communityCards)) {
+            return new HandWithPlayerIndex(HandRank.FLUSH, null, playerIndex, hand);
         } else {
             PlayingCard highCard = findHighCard(hand, communityCards);
             if (highCard != null) {
@@ -75,4 +77,24 @@ public class HandEvaluator {
         
         return hasThreeOfAKind && hasPair;
     }
+    
+    public boolean containsFlush(List<PlayingCard> hand, List<PlayingCard> communityCards) {
+        List<PlayingCard> allCards = new ArrayList<>(hand);
+        allCards.addAll(communityCards);
+        
+        Map<String, Integer> suitCount = new HashMap<>();
+        for (PlayingCard card : allCards) {
+            String suit = card.getSuit();
+            suitCount.put(suit, suitCount.getOrDefault(suit, 0) + 1);
+        }
+        
+        for (int count : suitCount.values()) {
+            if (count >= 5) {
+                return true; 
+            }
+        }
+        
+        return false; 
+    }
+    
 }
